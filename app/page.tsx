@@ -111,10 +111,10 @@ function MessageBubble({ message, onCopyCode }: { message: ChatMessage; onCopyCo
               {message.content}
             </div>
           ) : (
-            <ReactMarkdown
-              remarkPlugins={[remarkGfm]}
-              className="prose prose-invert prose-sm max-w-none"
-              components={{
+            <div className="prose prose-invert prose-sm max-w-none">
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
                 code({ inline, className, children, ...props }: any) {
                   const match = /language-(\w+)/.exec(className || '')
                   const language = match ? match[1] : 'text'
@@ -189,9 +189,10 @@ function MessageBubble({ message, onCopyCode }: { message: ChatMessage; onCopyCo
                   return <em className="italic text-slate-300">{children}</em>
                 },
               }}
-            >
-              {message.content}
-            </ReactMarkdown>
+              >
+                {message.content}
+              </ReactMarkdown>
+            </div>
           )}
         </div>
 
