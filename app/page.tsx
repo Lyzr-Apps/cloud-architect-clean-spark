@@ -115,7 +115,7 @@ function MessageBubble({ message, onCopyCode }: { message: ChatMessage; onCopyCo
               remarkPlugins={[remarkGfm]}
               className="prose prose-invert prose-sm max-w-none"
               components={{
-                code({ node, inline, className, children, ...props }) {
+                code({ inline, className, children, ...props }: any) {
                   const match = /language-(\w+)/.exec(className || '')
                   const language = match ? match[1] : 'text'
                   const codeString = String(children).replace(/\n$/, '')
