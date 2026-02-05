@@ -1,0 +1,33 @@
+{
+  "nodes": [
+    {
+      "id": "input_node",
+      "type": "Input",
+      "label": "User Query",
+      "nodeCategory": "input"
+    },
+    {
+      "id": "claude_expert_agent",
+      "type": "Agent",
+      "label": "Claude Expert Agent",
+      "nodeCategory": "agent",
+      "agent_id": "6984881838c06c33b0302dd8"
+    },
+    {
+      "id": "output_node",
+      "type": "Output",
+      "label": "Response Output",
+      "nodeCategory": "end"
+    }
+  ],
+  "edges": [
+    {
+      "source": "input_node",
+      "target": "claude_expert_agent"
+    },
+    {
+      "source": "claude_expert_agent",
+      "target": "output_node"
+    }
+  ]
+}

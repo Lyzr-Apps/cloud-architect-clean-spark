@@ -1,0 +1,24 @@
+{
+  "agents": [
+    {
+      "name": "Claude Expert Agent",
+      "agent_id": "6984881838c06c33b0302dd8",
+      "node_id": "claude_expert_agent",
+      "type": "single",
+      "has_knowledge_base": true,
+      "rag_id": "698488033baf38c4fa584a9f",
+      "rag_name": "claudedocskb2qtf"
+    }
+  ],
+  "knowledge_bases": [
+    {
+      "name": "claude_docs_kb",
+      "rag_id": "698488033baf38c4fa584a9f",
+      "rag_name": "claudedocskb2qtf",
+      "description": "Claude Code, Agent SDK, and skills ecosystem documentation for prompt engineering guidance",
+      "crawled_url": "https://docs.claude.com"
+    }
+  ],
+  "workflow_type": "single_agent",
+  "created_at": "2026-02-05T00:00:00Z"
+}

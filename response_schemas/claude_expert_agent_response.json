@@ -1,0 +1,39 @@
+{
+  "agent_name": "Claude Expert Agent",
+  "agent_id": "6984881838c06c33b0302dd8",
+  "agent_purpose": "assistant",
+  "description": "Claude Expert Agent provides conversational prompt engineering guidance and best practices. Returns detailed explanations in a natural, helpful format wrapped in JSON structure.",
+  "response_schema": {
+    "status": "string",
+    "result": {
+      "response": "string"
+    },
+    "metadata": {
+      "agent_name": "string",
+      "timestamp": "string"
+    }
+  },
+  "example_response": {
+    "status": "success",
+    "result": {
+      "response": "Hello! I'm your Claude Expert Agent, specialized in helping you craft effective prompts for Architect and leverage the Claude Code ecosystem.\n\n**Here's a sample prompt I might create for a common use case:**\n\nLet's say you wanted to build a code review assistant. Here's how I'd structure that prompt:\n\n```\nYou are a senior code reviewer specializing in Python development.\n\nYour task is to:\n1. Analyze the provided code for potential bugs, security vulnerabilities, and performance issues\n2. Check adherence to PEP 8 style guidelines\n3. Suggest improvements for readability and maintainability\n4. Provide specific, actionable feedback with code examples\n\nFor each issue found:\n- Severity level (Critical/High/Medium/Low)\n- Line number reference\n- Clear explanation of the problem\n- Suggested fix with code snippet\n\nMaintain a constructive, educational tone in all feedback.\n```\n\n**Why this structure works:**\n- Clear role definition sets the expertise level\n- Numbered steps create a systematic workflow\n- Specific output format ensures consistent, actionable results\n- Tone guidance keeps responses helpful and professional\n\n**How can I help you today?**\n- Do you have a specific prompt you'd like help crafting?\n- Need guidance on Claude features for a particular use case?\n- Want to refine an existing prompt for better results?\n\nJust describe what you're trying to build, and I'll help you create the perfect prompt!"
+    },
+    "metadata": {
+      "agent_name": "Claude Expert Agent",
+      "timestamp": "2025-01-13T10:30:00Z"
+    }
+  },
+  "is_actual_tested": true,
+  "test_timestamp": "2026-02-05T12:09:35.724791",
+  "test_message_used": "Hello, provide a sample response",
+  "actual_test_response": {
+    "status": "success",
+    "result": {
+      "response": "Hello! I'm your Claude Expert Agent, specialized in helping you craft effective prompts for Architect and leverage the Claude Code ecosystem.\n\n**Here's a sample prompt I might create for a common use case:**\n\nLet's say you wanted to build a code review assistant. Here's how I'd structure that prompt:\n\n```\nYou are a senior code reviewer specializing in Python development.\n\nYour task is to:\n1. Analyze the provided code for potential bugs, security vulnerabilities, and performance issues\n2. Check adherence to PEP 8 style guidelines\n3. Suggest improvements for readability and maintainability\n4. Provide specific, actionable feedback with code examples\n\nFor each issue found:\n- Severity level (Critical/High/Medium/Low)\n- Line number reference\n- Clear explanation of the problem\n- Suggested fix with code snippet\n\nMaintain a constructive, educational tone in all feedback.\n```\n\n**Why this structure works:**\n- Clear role definition sets the expertise level\n- Numbered steps create a systematic workflow\n- Specific output format ensures consistent, actionable results\n- Tone guidance keeps responses helpful and professional\n\n**How can I help you today?**\n- Do you have a specific prompt you'd like help crafting?\n- Need guidance on Claude features for a particular use case?\n- Want to refine an existing prompt for better results?\n\nJust describe what you're trying to build, and I'll help you create the perfect prompt!"
+    },
+    "metadata": {
+      "agent_name": "Claude Expert Agent",
+      "timestamp": "2025-01-13T10:30:00Z"
+    }
+  }
+}
