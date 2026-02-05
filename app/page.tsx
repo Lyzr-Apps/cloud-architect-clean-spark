@@ -11,6 +11,8 @@ import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import {
   FiSend,
   FiCopy,
@@ -46,12 +48,6 @@ interface SavedPrompt {
   date: Date
 }
 
-interface CodeBlock {
-  language: string
-  code: string
-  startIndex: number
-}
-
 // Example Prompts
 const EXAMPLE_PROMPTS: SavedPrompt[] = [
   {
@@ -77,84 +73,19 @@ const EXAMPLE_PROMPTS: SavedPrompt[] = [
   },
 ]
 
-// Code Block Component
-function CodeBlock({ code, language, onCopy }: { code: string; language: string; onCopy: () => void }) {
-  const [copied, setCopied] = useState(false)
-
-  const handleCopy = async () => {
-    const success = await copyToClipboard(code)
-    if (success) {
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-      onCopy()
-    }
-  }
-
-  return (
-    <div className="relative my-4 rounded-lg bg-slate-800 border border-slate-700">
-      <div className="flex items-center justify-between px-4 py-2 border-b border-slate-700">
-        <span className="text-xs text-slate-400 font-mono">{language}</span>
-        <Button
-          size="sm"
-          variant="ghost"
-          onClick={handleCopy}
-          className="h-7 text-slate-400 hover:text-slate-100 hover:bg-slate-700"
-        >
-          {copied ? (
-            <>
-              <FiCheck className="h-3 w-3 mr-1" />
-              <span className="text-xs">Copied!</span>
-            </>
-          ) : (
-            <>
-              <FiCopy className="h-3 w-3 mr-1" />
-              <span className="text-xs">Copy</span>
-            </>
-          )}
-        </Button>
-      </div>
-      <ScrollArea className="max-h-[400px]">
-        <pre className="p-4 overflow-x-auto">
-          <code className="text-sm text-slate-100 font-mono leading-relaxed">{code}</code>
-        </pre>
-      </ScrollArea>
-    </div>
-  )
-}
-
-// Parse markdown content for code blocks
-function parseCodeBlocks(content: string): { text: string; codeBlocks: CodeBlock[] } {
-  const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/g
-  const codeBlocks: CodeBlock[] = []
-  let match
-  let lastIndex = 0
-  let textWithPlaceholders = ''
-
-  while ((match = codeBlockRegex.exec(content)) !== null) {
-    textWithPlaceholders += content.substring(lastIndex, match.index)
-    textWithPlaceholders += `[CODE_BLOCK_${codeBlocks.length}]`
-
-    codeBlocks.push({
-      language: match[1] || 'text',
-      code: match[2].trim(),
-      startIndex: match.index,
-    })
-
-    lastIndex = match.index + match[0].length
-  }
-
-  textWithPlaceholders += content.substring(lastIndex)
-
-  return { text: textWithPlaceholders, codeBlocks }
-}
-
-// Message Component
+// Message Component with ReactMarkdown
 function MessageBubble({ message, onCopyCode }: { message: ChatMessage; onCopyCode: () => void }) {
   const isUser = message.role === 'user'
-  const { text, codeBlocks } = parseCodeBlocks(message.content)
+  const [copiedCode, setCopiedCode] = useState<number | null>(null)
 
-  // Split text by code block placeholders
-  const parts = text.split(/\[CODE_BLOCK_(\d+)\]/)
+  const handleCodeCopy = async (code: string, index: number) => {
+    const success = await copyToClipboard(code)
+    if (success) {
+      setCopiedCode(index)
+      setTimeout(() => setCopiedCode(null), 2000)
+      onCopyCode()
+    }
+  }
 
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-6`}>
@@ -175,28 +106,93 @@ function MessageBubble({ message, onCopyCode }: { message: ChatMessage; onCopyCo
               : 'bg-slate-800 text-slate-100 border border-slate-700'
           }`}
         >
-          {parts.map((part, idx) => {
-            if (idx % 2 === 0) {
-              // Text content
-              return part.trim() ? (
-                <div key={idx} className="whitespace-pre-wrap text-sm leading-relaxed mb-2">
-                  {part.trim()}
-                </div>
-              ) : null
-            } else {
-              // Code block
-              const blockIndex = parseInt(part)
-              const codeBlock = codeBlocks[blockIndex]
-              return codeBlock ? (
-                <CodeBlock
-                  key={idx}
-                  code={codeBlock.code}
-                  language={codeBlock.language}
-                  onCopy={onCopyCode}
-                />
-              ) : null
-            }
-          })}
+          {isUser ? (
+            <div className="whitespace-pre-wrap text-sm leading-relaxed">
+              {message.content}
+            </div>
+          ) : (
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              className="prose prose-invert prose-sm max-w-none"
+              components={{
+                code({ node, inline, className, children, ...props }) {
+                  const match = /language-(\w+)/.exec(className || '')
+                  const language = match ? match[1] : 'text'
+                  const codeString = String(children).replace(/\n$/, '')
+                  const codeIndex = Math.random()
+
+                  if (!inline) {
+                    return (
+                      <div className="relative my-4 rounded-lg bg-slate-900 border border-slate-700">
+                        <div className="flex items-center justify-between px-4 py-2 border-b border-slate-700">
+                          <span className="text-xs text-slate-400 font-mono">{language}</span>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleCodeCopy(codeString, codeIndex)}
+                            className="h-7 text-slate-400 hover:text-slate-100 hover:bg-slate-700"
+                          >
+                            {copiedCode === codeIndex ? (
+                              <>
+                                <FiCheck className="h-3 w-3 mr-1" />
+                                <span className="text-xs">Copied!</span>
+                              </>
+                            ) : (
+                              <>
+                                <FiCopy className="h-3 w-3 mr-1" />
+                                <span className="text-xs">Copy</span>
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                        <ScrollArea className="max-h-[400px]">
+                          <pre className="p-4 overflow-x-auto m-0">
+                            <code className="text-sm text-slate-100 font-mono leading-relaxed" {...props}>
+                              {children}
+                            </code>
+                          </pre>
+                        </ScrollArea>
+                      </div>
+                    )
+                  }
+                  return (
+                    <code className="bg-slate-900 px-1.5 py-0.5 rounded text-xs font-mono" {...props}>
+                      {children}
+                    </code>
+                  )
+                },
+                p({ children }) {
+                  return <p className="mb-3 leading-relaxed text-sm">{children}</p>
+                },
+                ul({ children }) {
+                  return <ul className="list-disc list-inside mb-3 space-y-1">{children}</ul>
+                },
+                ol({ children }) {
+                  return <ol className="list-decimal list-inside mb-3 space-y-1">{children}</ol>
+                },
+                li({ children }) {
+                  return <li className="text-sm">{children}</li>
+                },
+                h1({ children }) {
+                  return <h1 className="text-xl font-bold mb-3 mt-4">{children}</h1>
+                },
+                h2({ children }) {
+                  return <h2 className="text-lg font-bold mb-2 mt-3">{children}</h2>
+                },
+                h3({ children }) {
+                  return <h3 className="text-base font-bold mb-2 mt-2">{children}</h3>
+                },
+                strong({ children }) {
+                  return <strong className="font-semibold text-blue-400">{children}</strong>
+                },
+                em({ children }) {
+                  return <em className="italic text-slate-300">{children}</em>
+                },
+              }}
+            >
+              {message.content}
+            </ReactMarkdown>
+          )}
         </div>
 
         {!isUser && (
